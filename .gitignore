@@ -195,6 +195,7 @@ Temporary Items
 # Django stuff:
 
 # Flask stuff:
+pybo.db
 
 # Scrapy stuff:
 
