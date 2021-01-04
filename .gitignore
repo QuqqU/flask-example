@@ -195,7 +195,12 @@ Temporary Items
 # Django stuff:
 
 # Flask stuff:
+.include
+include/
 pybo.db
+.migrations
+migrations/
+
 
 # Scrapy stuff:
 
@@ -207,7 +212,6 @@ pybo.db
 
 # IPython
 share/
-./share/
 
 # pyenv
 pyvenv.cfg
