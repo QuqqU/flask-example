@@ -17,6 +17,9 @@ def _list():
                            question_list=question_list)
 
 
+# ? hello
+# ! hello
+# @param hi  
 @ bp.route('/detail/<int:question_id>/')
 def detail(question_id):
     form = AnswerForm()

@@ -19,7 +19,7 @@
                 <td>
                     <a href="{{ url_for('question.detail', question_id=question.id) }}">{{ question.subject }}</a>
                 </td>
-                <td>{{ question.create_day }}</td>
+                <td>{{ question.create_day | datetime }}</td>
             </tr>
             {% endfor %}
             {% else %}
@@ -61,8 +61,6 @@
         </li>
         {% endif %}
         {% endfor %}
-
-
 
 
         {% if question_list.has_next %}
