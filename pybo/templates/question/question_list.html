@@ -4,9 +4,10 @@
 <div class="container my-3">
     <table class="table">
         <thead>
-            <tr class="thead-dark">
+            <tr class="text-center thead-dark">
                 <th>no.</th>
-                <th>title</th>
+                <th style="width:50">title</th>
+                <th>writer</th>
                 <th>date</th>
             </tr>
         </thead>
@@ -14,11 +15,15 @@
         <tbody>
             {% if question_list %}
             {% for question in question_list.items %}
-            <tr>
-                <td>{{ loop.index }}</td>
-                <td>
+            <tr class="text-center">
+                <td>{{ question_list.total - ((question_list.page - 1) * question_list.per_page) - loop.index0 }}</td>
+                <td class="text-left">
                     <a href="{{ url_for('question.detail', question_id=question.id) }}">{{ question.subject }}</a>
+                    {% if question.answer_set | length > 0 %}
+                    <span class="text-danger small ml-2">{{ question.answer_set | length }}</span>
+                    {% endif %}
                 </td>
+                <td>{{ question.user.username }}</td>
                 <td>{{ question.create_day | datetime }}</td>
             </tr>
             {% endfor %}
