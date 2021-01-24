@@ -1,5 +1,5 @@
 from datetime import datetime
-from flask import Blueprint, render_template, request, url_for, g
+from flask import Blueprint, render_template, request, url_for, g, flash
 from werkzeug.utils import redirect
 from pybo.models import Question
 from pybo.form import QuestionForm, AnswerForm
@@ -18,9 +18,25 @@ def _list():
                            question_list=question_list)
 
 
-# ? hello
-# ! hello
-# @param hi
+@bp.route('/modify/<int:question_id>', methods=['GET', 'POST'])
+@login_required
+def modify(question_id):
+    question = Question.query.get_or_404(question_id)
+    if g.user != question.user:
+        flash('no authority~')
+        return redirect(url_for('question.detail', question_id=question_id))
+    if request.method == 'POST':
+        form = QuestionForm()
+        if form.validate_on_submit():
+            form.populate_obj(question)
+            question.modify_date = datetime.now()
+            db.session.commit()
+            return redirect(url_for('question.detail', question_id=question_id))
+    else:
+        form = QuestionForm(obj=question)
+    return render_template('question/question_form.html', form=form)
+
+
 @bp.route('/detail/<int:question_id>/')
 def detail(question_id):
     form = AnswerForm()
@@ -29,6 +45,17 @@ def detail(question_id):
                            question=question,
                            form=form)
 
+@bp.route('/delete/<int:question_id>')
+@login_required
+def delete(question_id):
+    question = Question.query.get_or_404(question_id)
+    if g.user != question.user :
+        flash('no authority~')
+        return redirect(url_for('question.detail', question_id=question_id))
+    db.session.delete(question)
+    db.session.commit()
+    return redirect(url_for('question._list'))
+
 
 @bp.route('/create', methods=('get', 'post'))
 @login_required
@@ -36,7 +63,7 @@ def create():
     form = QuestionForm()
     if request.method == 'POST' and form.validate_on_submit():
         question = Question(subject=form.subject.data,
-                            context=form.content.data,
+                            content=form.content.data,
                             create_day=datetime.now(),
                             user=g.user)
         db.session.add(question)

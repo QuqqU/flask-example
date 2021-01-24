@@ -6,6 +6,8 @@
         <meta name="viewpoint" content="width=device-width, initial-scale=1, shrink-to-fit=no">
         <link rel="stylesheet" href="{{ url_for('static', filename='bootstrap.min.css') }}">
         <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+        <link rel="stylesheet" href="{{ url_for('static', filename='simplemde.min.css') }}">
+
         <title>hi_pybo!!!</title>
     </head>
 
@@ -13,11 +15,19 @@
 
         {% include "navbar.html" %}
 
+        <script src="{{ url_for('static', filename='simplemde.min.js') }}"></script>
+
         {% block content %}
         {% endblock %}
 
+        <script>
+            var mde = new SimpleMDE({ element: document.getElementById("content") });
+        </script>
+
         <script src="{{ url_for('static', filename='jquery-3.5.1.min.js') }}"></script>
         <script src="{{ url_for('static', filename='bootstrap.min.js') }}"></script>
+        {% block script %}
+        {% endblock %}
     </body>
 
 </html>

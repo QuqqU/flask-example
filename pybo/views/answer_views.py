@@ -1,5 +1,5 @@
 from datetime import datetime
-from flask import Blueprint, render_template, url_for, request, g
+from flask import Blueprint, render_template, url_for, request, g, flash
 from werkzeug.utils import redirect
 from pybo import db
 from pybo.models import Question, Answer
@@ -24,3 +24,35 @@ def create(question_id):
         db.session.commit()
         return redirect(url_for('question.detail', question_id=question_id))
     return render_template('question/question_detail.html', question=question, form=form)
+
+
+@bp.route('/modify/<int:answer_id>', methods=['GET', 'POST'])
+@login_required
+def modify(answer_id):
+    answer = Answer.query.get_or_404(answer_id)
+    if g.user != answer.user:
+        flash('nope!')
+        return redirect(url_for('question.detail', question_id=answer.question.id))
+    if request.method == "POST":
+        form = AnswerForm()
+        if form.validate_on_submit():
+            form.populate_obj(answer)
+            answer.modify_date = datetime.now()
+            db.session.commit()
+            return redirect(url_for('question.detail', question_id=answer.question.id))
+    else:
+        form = AnswerForm(obj=answer)
+    return render_template('answer/answer_form.html', answer=answer, form=form)
+
+
+@bp.route('/delete/<int:answer_id>')
+@login_required
+def delete(answer_id):
+    answer = Answer.query.get_or_404(answer_id)
+    question_id = answer.question.id
+    if g.user != answer.user:
+        flash('nope')
+    else:
+        db.session.delete(answer)
+        db.session.commit()
+    return redirect(url_for('question.detail', question_id=question_id))
